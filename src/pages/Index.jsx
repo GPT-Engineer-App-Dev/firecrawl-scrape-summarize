@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Container, VStack, Input, Button, Text, Box } from '@chakra-ui/react';
+import { Container, VStack, Input, Button, Text, Box, Textarea } from '@chakra-ui/react';
 
 const Index = () => {
   const [url, setUrl] = useState('');
   const [summary, setSummary] = useState('');
   const [quality, setQuality] = useState('');
   const [loading, setLoading] = useState(false);
+  const [classificationPrompt, setClassificationPrompt] = useState('');
 
   const handleScrape = async () => {
     setLoading(true);
@@ -34,6 +35,13 @@ const Index = () => {
     <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
       <VStack spacing={4}>
         <Text fontSize="2xl">URL Scrape and Analyze</Text>
+        <Textarea
+          placeholder="Enter classification prompt"
+          value={classificationPrompt}
+          onChange={(e) => setClassificationPrompt(e.target.value)}
+          size="sm"
+          resize="vertical"
+        />
         <Input placeholder="Enter URL to scrape" value={url} onChange={(e) => setUrl(e.target.value)} />
         <Button onClick={handleScrape} isLoading={loading} colorScheme="blue">Scrape URL</Button>
         {summary && (
