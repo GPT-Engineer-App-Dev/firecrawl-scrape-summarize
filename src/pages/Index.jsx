@@ -7,6 +7,27 @@ const Index = () => {
   const [quality, setQuality] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const classifyAndSummarize = async (content) => {
+    try {
+      const response = await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer YOUR_OPENAI_API_KEY'
+        },
+        body: JSON.stringify({
+          prompt: `Summarize the following content and classify its quality:\n\n${content}`,
+          max_tokens: 1024
+        })
+      });
+      const data = await response.json();
+      return { summary: data.choices[0].text, quality: 'High' }; // Simplified quality assessment
+    } catch (error) {
+      console.error('Failed to classify and summarize:', error);
+      return { summary: 'Failed to classify and summarize the content.', quality: 'Unknown' };
+    }
+  };
+
   const handleScrape = async () => {
     setLoading(true);
     try {
@@ -19,9 +40,9 @@ const Index = () => {
         body: JSON.stringify({ url })
       });
       const data = await response.json();
-      // Simulate GPT-3.5 summarization and quality categorization
-      setSummary('This is a simulated summary of the content.');
-      setQuality('High');
+      const classification = await classifyAndSummarize(data.content);
+      setSummary(classification.summary);
+      setQuality(classification.quality);
     } catch (error) {
       console.error('Failed to scrape:', error);
       setSummary('Failed to scrape the URL.');
