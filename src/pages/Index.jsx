@@ -5,6 +5,7 @@ const Index = () => {
   const [url, setUrl] = useState('');
   const [summary, setSummary] = useState('');
   const [quality, setQuality] = useState('');
+  const [markdownContent, setMarkdownContent] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleScrape = async () => {
@@ -18,14 +19,16 @@ const Index = () => {
         },
         body: JSON.stringify({ url })
       });
-      const data = await response.json();
+      const { data: { markdown } } = await response.json();
       // Simulate GPT-3.5 summarization and quality categorization
       setSummary('This is a simulated summary of the content.');
       setQuality('High');
+      setMarkdownContent(markdown || 'No markdown content available.');
     } catch (error) {
       console.error('Failed to scrape:', error);
       setSummary('Failed to scrape the URL.');
       setQuality('Unknown');
+      setMarkdownContent('No markdown content available.');
     }
     setLoading(false);
   };
@@ -42,6 +45,12 @@ const Index = () => {
             <Text>{summary}</Text>
             <Text fontWeight="bold">Quality:</Text>
             <Text>{quality}</Text>
+          </Box>
+        )}
+        {markdownContent && (
+          <Box p={4} mt={4} borderWidth="1px" borderRadius="lg">
+            <Text fontWeight="bold">Markdown Content:</Text>
+            <Text whiteSpace="pre-wrap">{markdownContent}</Text>
           </Box>
         )}
       </VStack>
